@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds" debug="false">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <property name="log.path" value="/logs"/>
+
+    <springProperty scop="context" name="logName" source="spring.application.name" defaultValue="platform-log"/>
+    <springProperty scop="context" name="rabbit.host" source="spring.rabbitmq.host" defaultValue="192.168.1.35"/>
+    <springProperty scop="context" name="rabbit.port" source="spring.rabbitmq.port" defaultValue="5672"/>
+    <springProperty scop="context" name="rabbit.username" source="spring.rabbitmq.username" defaultValue="guest"/>
+    <springProperty scop="context" name="rabbit.password" source="spring.rabbitmq.password" defaultValue="guest"/>
+
+    <contextName>${AppName}</contextName>
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p})
+              %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-100.100logger{390}){cyan}
+              %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!--
+        此日志appender是为开发使用，只配置最底级别，
+        控制台输出的日志级别是大于或等于此级别的日志信息
+        -->
+        <!--
+       <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+           <level>debug</level>
+       </filter>
+       -->
+        <encoder>
+            <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="AMQP" class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+        <!-- encoder必须要有，是logback和logstash的纽带 -->
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- 用户自定义Json字符串，用于向logstash提交额外的自定义属性。可在logstash的input里接收该参数 -->
+            <customFields>{"appName":"${logName}", "env":"${SPRING_PROFILES_ACTIVE}"}</customFields>
+        </encoder>
+        <host>${rabbit.host}</host>
+        <port>${rabbit.port}</port>
+        <username>${rabbit.username}</username>
+        <password>${rabbit.password}</password>
+        <routingKeyPattern>logstash</routingKeyPattern>
+        <declareExchange>false</declareExchange>
+        <exchangeType>direct</exchangeType>
+        <exchangeName>ex_logstash</exchangeName>
+        <generateId>true</generateId>
+        <charset>UTF-8</charset>
+        <durable>true</durable>
+        <deliveryMode>NON_PERSISTENT</deliveryMode>
+    </appender>
+
+    <logger name="com.jnb" level="DEBUG"/>
+
+    <!--输出到logstash的appender-->
+    <!--<appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+        <!--&lt;!&ndash;可以访问的logstash日志收集端口&ndash;&gt;-->
+        <!--<destination>192.168.1.46:4560</destination>-->
+        <!--<encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+    <!--</appender>-->
+
+    <logger name="org.springframework.security" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="AMQP"/>
+        <!--<appender-ref ref="LOGSTASH"/>-->
+    </root>
+
+</configuration>
