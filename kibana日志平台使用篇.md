@@ -1,6 +1,6 @@
 # Elk7.0.1使用篇
 
-	ELK即Elasticsearch、Logstash、Kibana,组合起来可以搭建线上日志系统，本文主要讲解使用ELK来收集SpringBoot应用产生的日志。
+	ELK即Elasticsearch、Logstash、Kibana,组合起来可以搭建线上日志系统，本文主要讲解kibana使用。
 
 ### 参照文章
 
@@ -17,3 +17,10 @@
 ![](img/a7.png)
 ![](img/a8.png)
 ![](img/a9.png)
+![](img/a10.png)
+![](img/a11.png)
+![](img/a12.png)
+![](img/a13.png)
+![](img/a14.png)
+
+注: 里面还有安全要配置, 因为我只是开发人员, 暂时没时间深入进去, 到时候有时间再学习
