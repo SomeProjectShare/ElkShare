@@ -386,4 +386,10 @@ docker restart kibana
 	</configuration>
 
 
+###定时清理索引
+使用linux自带的调度:
+		
+    crontab -e
 
+    每天凌晨1点定时清理elk索引, 脚本放在scripts下面
+    0 1 * * * /**/es-index-clear.sh
