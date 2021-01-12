@@ -97,10 +97,10 @@ output {
 }
 </pre>
 
-###创建配置文件存放目录并上传配置文件到该目录
+### 创建配置文件存放目录并上传配置文件到该目录
 <pre>mkdir /mydata/logstash</pre>
-###使用docker-compose.yml脚本启动ELK服务
-####docker-compose.yml内容
+### 使用docker-compose.yml脚本启动ELK服务
+#### docker-compose.yml内容
 <pre>version: '3'
 services:
   elasticsearch:
@@ -138,11 +138,11 @@ services:
     ports:
       - 4560:4560
 </pre>
-###上传到linux服务器并使用docker-compose命令运行
+### 上传到linux服务器并使用docker-compose命令运行
 <pre>docker-compose up -d</pre>
 注意：Elasticsearch启动可能需要好几分钟，要耐心等待(我的服务器是i7, 所以启动很快)
 ![](img/a2.png)
-###在logstash中安装json_lines插件(这个我暂时不知道为什么下载不了, 我是后台开发人员,就没怎么研究了, 谁搞定了, 跟我说一声)
+### 在logstash中安装json_lines插件(这个我暂时不知道为什么下载不了, 我是后台开发人员,就没怎么研究了, 谁搞定了, 跟我说一声)
 <pre># 进入logstash容器
 docker exec -it logstash /bin/bash
 # 进入bin目录
@@ -154,7 +154,7 @@ exit
 # 重启logstash服务
 docker restart logstash
 </pre>
-###kibana支持中文界面展示
+### kibana支持中文界面展示
 <pre># 进入logstash容器
 docker exec -it kibana /bin/bash
 # 进入bin目录
@@ -177,20 +177,20 @@ exit
 # 重启logstash服务
 docker restart kibana
 </pre>
-###开启防火墙并在kibana中查看
+### 开启防火墙并在kibana中查看
 <pre>systemctl stop firewalld</pre>
 访问地址：http://自己的ip:5601
 ![](img/a3.png)
-###SpringBoot应用集成Logstash
-###在pom.xml中添加logstash-logback-encoder依赖
+### SpringBoot应用集成Logstash
+### 在pom.xml中添加logstash-logback-encoder依赖
 	<!--集成logstash-->
 	<dependency>
 	    <groupId>net.logstash.logback</groupId>
 	    <artifactId>logstash-logback-encoder</artifactId>
 	    <version>5.3</version>
 	</dependency>
-###添加配置文件logback-spring.xml让logback的日志输出到logstash
-###input使用的tcp,用以下的配置
+### 添加配置文件logback-spring.xml让logback的日志输出到logstash
+### input使用的tcp,用以下的配置
 <pre>注意appender节点下的destination需要改成你自己的logstash服务地址，比如我的是：自己的ip:4560 </pre>
 	<?xml version="1.0" encoding="UTF-8"?>
 	<!DOCTYPE configuration>
@@ -224,7 +224,7 @@ docker restart kibana
 	        <appender-ref ref="LOGSTASH"/>
 	    </root>
 	</configuration>
-###input使用的rabbitmq,用以下的配置(除了注册中心和配置中心)
+### input使用的rabbitmq,用以下的配置(除了注册中心和配置中心)
 	<?xml version="1.0" encoding="UTF-8"?>
 	<configuration scan="true" scanPeriod="30 seconds" debug="false">
 	    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
@@ -304,7 +304,7 @@ docker restart kibana
 	
 	</configuration>
 
-###注册中心和配置中心的logback-spring.xml
+### 注册中心和配置中心的logback-spring.xml
 	<?xml version="1.0" encoding="UTF-8"?>
 	<configuration scan="true" scanPeriod="30 seconds" debug="false">
 	    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
@@ -386,7 +386,7 @@ docker restart kibana
 	</configuration>
 
 
-###定时清理索引
+### 定时清理索引
 使用linux自带的调度:
 		
     crontab -e
